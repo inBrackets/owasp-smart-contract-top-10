@@ -1,0 +1,82 @@
+name: Smart Contract Security CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+# Wymagane uprawnienia dla dorny/test-reporter do zapisu wyników w zakładce Checks
+permissions:
+  statuses: write
+  checks: write
+  contents: read
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Pobranie kodu źródłowego repozytorium
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # Kluczowe dla Forge, jeśli używasz git submodules (np. forge-std)
+
+      # ==========================================
+      # ETAP 1: Testy Solidity (Foundry / Forge)
+      # ==========================================
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Run Forge Tests
+        # Uruchamiamy testy z formatowaniem junit i zapisujemy do pliku xml
+        run: |
+          forge test --v_output_format junit > forge-results.xml
+        # Zabezpieczenie: Kontynuuj nawet gdy testy failują, aby wyrenderować raport
+        continue-on-error: true 
+
+      # ==========================================
+      # ETAP 2: Testy Python (Ape / Pytest)
+      # ==========================================
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # Dopasuj do wersji używanej lokalnie
+
+      - name: Install uv (Python Package Manager)
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python Dependencies & Ape Plugins
+        run: |
+          uv pip install -r requirements.txt || uv pip install eth-ape pytest
+          uv run ape plugins install solidity
+
+      - name: Run Ape Tests
+        # Flaga --junitxml generuje raport kompatybilny z wtyczką dorny
+        run: |
+          uv run pytest --junitxml=ape-results.xml
+        continue-on-error: true
+
+      # ==========================================
+      # ETAP 3: Generowanie Raportów (Dorny Plugin)
+      # ==========================================
+      - name: Render Forge Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure() # Uruchom zawsze, nawet gdy testy oblały
+        with:
+          name: Forge Solidity Tests Report
+          path: forge-results.xml
+          reporter: java-junit # Dorny używa parsera java-junit dla plików XML
+
+      - name: Render Ape Python Tests Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Ape Python Exploits Report
+          path: ape-results.xml
+          reporter: java-junit
