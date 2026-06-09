@@ -51,13 +51,16 @@ jobs:
 
       - name: Install Python Dependencies & Ape Plugins
         run: |
-          uv pip install -r requirements.txt || uv pip install eth-ape pytest
-          uv run ape plugins install solidity
+          # Instalujemy paczki bezpośrednio w systemie kontenera CI
+          uv pip install --system eth-ape pytest
+          
+          # Instalujemy wtyczkę solidity globalnie w środowisku ape
+          ape plugins install solidity
 
       - name: Run Ape Tests
         # Flaga --junitxml generuje raport kompatybilny z wtyczką dorny
         run: |
-          uv run pytest --junitxml=ape-results.xml
+          pytest --junitxml=ape-results.xml
         continue-on-error: true
 
       # ==========================================
