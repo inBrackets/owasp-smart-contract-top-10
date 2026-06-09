@@ -2,16 +2,16 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import "../../src/VulnerableVault.sol";
+import "../../src/AccessControlVulnerability.sol";
 
 contract AccessControlTest is Test {
-    VulnerableVault public vault;
+    AccessControlVulnerability public vault;
     address public owner = address(1);
     address public attacker = address(2);
 
     function setUp() public {
         vm.prank(owner);
-        vault = new VulnerableVault();
+        vault = new AccessControlVulnerability();
         vm.deal(address(vault), 10 ether); // Seed vault with funds
     }
 
