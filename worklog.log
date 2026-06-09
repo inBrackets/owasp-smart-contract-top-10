@@ -1,0 +1,9 @@
+create virtual env: `uv venv ~/.virtualenvs/python-foundry --python 3.14`
+
+activate python env: `source ~/.virtualenvs/python-foundry/bin/activate`
+
+install foundry: `curl -L https://foundry.paradigm.xyz | bash`
+
+install eth-ape: `uv pip install eth-ape`
+
+install foundry: `ape plugins install foundry`

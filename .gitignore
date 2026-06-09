@@ -1,0 +1,63 @@
+# Ape stuff
+.build/
+.cache/
+
+# Python
+.env
+.venv
+.pytest_cache
+.python-version
+__pycache__
+
+
+# ==========================================
+# Python & Virtual Environments (Ape / UV)
+# ==========================================
+.venv/
+venv/
+ENV/
+env/
+.virtualenvs/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+.ape/
+
+# ==========================================
+# Solidity & Compilation Artifacts (Forge / Ape)
+# ==========================================
+out/
+artifacts/
+cache/
+.solc_downloads/
+broadcast/
+foundry.toml.bak
+
+# ==========================================
+# Package Managers & Dependencies
+# ==========================================
+# If you are using Node/NPM for any frontend tools
+node_modules/
+
+# NOTE: We typically DO NOT ignore the "lib/" folder for Forge 
+# because it contains Git Submodules. Git manages those references natively.
+
+# ==========================================
+# Environment Variables & Security (CRITICAL)
+# ==========================================
+.env
+.env.local
+.env.*.local
+*.env
+config.json
+
+# ==========================================
+# Operating System & IDE Clutter
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.project
+.settings/
