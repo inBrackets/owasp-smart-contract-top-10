@@ -9,7 +9,6 @@ contract VulnerableVault {
         owner = msg.sender;
     }
 
-    // VULNERABILITY: Missing access control modifier! Anyone can call this.
     function changeOwner(address _newOwner) external {
         owner = _newOwner;
     }
@@ -22,4 +21,6 @@ contract VulnerableVault {
         require(msg.sender == owner, "Not the owner!");
         payable(owner).transfer(address(this).balance);
     }
+
+    receive() external payable {}
 }
