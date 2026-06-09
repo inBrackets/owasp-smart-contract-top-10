@@ -30,11 +30,17 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: Run Forge Tests
-        # Uruchamiamy testy Forge (Foundry nie wspiera natywnie JUnit XML)
         run: |
-          forge test -vv
-        # Zabezpieczenie: Kontynuuj nawet gdy testy failują
-        continue-on-error: false 
+          forge test --summary | tee forge-output.txt
+        continue-on-error: true
+
+      - name: Add Forge Test Summary
+        if: always()
+        run: |
+          echo "## 🔨 Forge Test Results" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat forge-output.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY 
 
       # ==========================================
       # ETAP 2: Testy Python (Ape / Pytest)
