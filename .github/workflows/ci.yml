@@ -52,7 +52,7 @@ jobs:
       - name: Install Python Dependencies & Ape Plugins
         run: |
           # Instalujemy paczki bezpośrednio w systemie kontenera CI
-          uv pip install --system eth-ape pytest ape-solidity
+          uv pip install --system eth-ape pytest ape-solidity ape-foundry
 
       - name: Run Ape Tests
         # Flaga --junitxml generuje raport kompatybilny z wtyczką dorny
