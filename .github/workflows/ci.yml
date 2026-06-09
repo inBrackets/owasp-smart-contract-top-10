@@ -30,11 +30,11 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: Run Forge Tests
-        # Uruchamiamy testy z formatowaniem junit i zapisujemy do pliku xml
+        # Uruchamiamy testy Forge (Foundry nie wspiera natywnie JUnit XML)
         run: |
-          forge test --v_output_format junit > forge-results.xml
-        # Zabezpieczenie: Kontynuuj nawet gdy testy failują, aby wyrenderować raport
-        continue-on-error: true 
+          forge test -vv
+        # Zabezpieczenie: Kontynuuj nawet gdy testy failują
+        continue-on-error: false 
 
       # ==========================================
       # ETAP 2: Testy Python (Ape / Pytest)
@@ -63,14 +63,6 @@ jobs:
       # ==========================================
       # ETAP 3: Generowanie Raportów (Dorny Plugin)
       # ==========================================
-      - name: Render Forge Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure() # Uruchom zawsze, nawet gdy testy oblały
-        with:
-          name: Forge Solidity Tests Report
-          path: forge-results.xml
-          reporter: java-junit # Dorny używa parsera java-junit dla plików XML
-
       - name: Render Ape Python Tests Report
         uses: dorny/test-reporter@v1
         if: success() || failure()
